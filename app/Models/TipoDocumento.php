@@ -5,15 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ActividadEconomica extends Model
+class TipoDocumento extends Model
 {
-    protected $table = 'venta_mh_actividad_economica';
-    protected $primaryKey = 'id_actividad_economica';
+    protected $table = 'venta_mh_tipo_documento';
+    protected $primaryKey = 'id_tipo_documento';
     public $timestamps = false;
 
     protected $fillable = [
-        'actividad_economica',
-        'cod_actividad_economica',
+        'tipo_documento',
+        'cod_tipo_documento',
         'estado',
     ];
 }

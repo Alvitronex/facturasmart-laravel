@@ -13,7 +13,7 @@ class Departamento extends Model
 
     protected $fillable = [
         'departamento',
-        'cod_departamento',
+        'cod_mh_departamento',
         'estado',
     ];
 }

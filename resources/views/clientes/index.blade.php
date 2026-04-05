@@ -195,7 +195,6 @@
 
 <body>
 
-    {{-- Notificación flash --}}
     @if(session('msg'))
     @php
     $map = [
@@ -211,7 +210,6 @@
     </div>
     @endif
 
-    {{-- Encabezado --}}
     <div class="d-flex justify-content-between align-items-center pb-3 mb-3 border-bottom">
         <h1 class="page-title">Clientes</h1>
         <button class="btn-add" onclick="toggleForm()" title="Nuevo cliente">
@@ -219,13 +217,10 @@
         </button>
     </div>
 
-    {{-- Panel formulario (crear / editar inline) --}}
     <div id="panel-form">
         <form id="form-cliente" method="POST" action="{{ route('clientes.store') }}">
             @csrf
-            @method('POST')
 
-            {{-- Tipo de cliente --}}
             <div class="mb-3">
                 <label class="f-label">Tipo de cliente</label>
                 <select name="tipo_cliente" id="tipo_cliente" class="f-ctrl" onchange="ajustarCampos()">
@@ -237,10 +232,8 @@
                 </select>
             </div>
 
-            {{-- Bloque principal (oculto hasta elegir tipo) --}}
             <div id="bloque-main" class="d-none">
 
-                {{-- Documento / N° Documento / NRC --}}
                 <div class="row g-3 mb-3">
                     <div class="col-md-4">
                         <label class="f-label">Documento</label>
@@ -261,7 +254,6 @@
                     </div>
                 </div>
 
-                {{-- Razón social / Nombre comercial / Teléfono --}}
                 <div class="row g-3 mb-3">
                     <div class="col-md-4">
                         <label class="f-label">Razón social / Nombre del cliente</label>
@@ -277,7 +269,6 @@
                     </div>
                 </div>
 
-                {{-- Correo --}}
                 <div class="row g-3 mb-3">
                     <div class="col-md-4">
                         <label class="f-label">Correo</label>
@@ -285,7 +276,6 @@
                     </div>
                 </div>
 
-                {{-- Bloque empresa: Giro / Tipo contribuyente / Tipo persona --}}
                 <div class="row g-3 mb-3 d-none" id="bloque-empresa">
                     <div class="col-md-4">
                         <label class="f-label">Giro</label>
@@ -315,14 +305,16 @@
                     </div>
                 </div>
 
-                {{-- Departamento / Municipio --}}
                 <div class="row g-3 mb-3 d-none" id="bloque-ubicacion">
                     <div class="col-md-4">
                         <label class="f-label">Departamento</label>
                         <select name="cod_departamento" id="cod_departamento" class="f-ctrl">
                             <option value="">---</option>
                             @foreach($catalogos['departamentos'] as $dep)
-                            <option value="{{ $dep->id_departamento }}">{{ $dep->departamento }}</option>
+                            <option value="{{ $dep->id_departamento }}"
+                                data-cod="{{ $dep->cod_mh_departamento }}">
+                                {{ $dep->departamento }}
+                            </option>
                             @endforeach
                         </select>
                     </div>
@@ -334,7 +326,6 @@
                     </div>
                 </div>
 
-                {{-- País (solo extranjero) --}}
                 <div class="row g-3 mb-3 d-none" id="bloque-pais">
                     <div class="col-md-4">
                         <label class="f-label">País</label>
@@ -347,7 +338,6 @@
                     </div>
                 </div>
 
-                {{-- Dirección / Ciudad --}}
                 <div class="row g-3 mb-3">
                     <div class="col-md-6">
                         <label class="f-label">Dirección</label>
@@ -359,25 +349,22 @@
                     </div>
                 </div>
 
-                {{-- Descripción adicional --}}
                 <div class="mb-3">
                     <label class="f-label">Descripción adicional</label>
                     <input type="text" name="descripcion_adicional" id="descripcion_adicional" class="f-ctrl">
                 </div>
 
-                {{-- Botón submit --}}
                 <div class="d-flex justify-content-end mb-3">
                     <button type="submit" id="btn-submit" class="btn-agregar">
                         <i class="bi bi-plus-lg me-1" id="submit-icon"></i>
-                        <span id="submit-label"> Agregar</span>
+                        <span id="submit-label">+ Agregar</span>
                     </button>
                 </div>
 
-            </div>{{-- fin bloque-main --}}
+            </div>
         </form>
     </div>
 
-    {{-- Tabla de clientes --}}
     <table id="tabla-clientes" class="table w-100">
         <thead>
             <tr>
@@ -425,8 +412,8 @@
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
     <script>
-        // Municipios pre-cargados desde el controlador (igual que el PHP original)
         const municipiosPorDep = @json($municipiosPorDep);
 
         // ── DataTables ───────────────────────────────────────────
@@ -438,7 +425,6 @@
             pageLength: 10,
         });
 
-        // ── Toggle panel form ────────────────────────────────────
         function toggleForm(forzarAbrir = null) {
             const panel = document.getElementById('panel-form');
             const icono = document.getElementById('icono-toggle');
@@ -459,26 +445,14 @@
             f.reset();
             f.action = '{{ route("clientes.store") }}';
             f.querySelector('input[name="_method"]')?.remove();
-            document.getElementById('submit-label').textContent = 'Agregar';
+            document.getElementById('submit-label').textContent = '+ Agregar';
             document.getElementById('btn-submit').className = 'btn-agregar';
             document.getElementById('submit-icon').className = 'bi bi-plus-lg me-1';
             document.getElementById('cod_municipio').innerHTML = '<option value="">--</option>';
             ajustarCampos();
         }
 
-        function resetForm() {
-            const f = document.getElementById('form-cliente');
-            f.reset();
-            f.action = '{{ route("clientes.store") }}';
-            f.querySelector('input[name="_method"]')?.remove();
-            document.getElementById('submit-label').textContent = 'Agregar';
-            document.getElementById('btn-submit').className = 'btn-agregar';
-            document.getElementById('submit-icon').className = 'bi bi-plus-lg me-1';
-            document.getElementById('cod_municipio').innerHTML = '<option value="">--</option>';
-            ajustarCampos();
-        }
-
-        // ── Cargar datos para edición ────────────────────────────
+        // ── Cargar edición ───────────────────────────────────────
         function cargarEdicion(c) {
             toggleForm(true);
             window.scrollTo({
@@ -487,11 +461,8 @@
             });
 
             const f = document.getElementById('form-cliente');
-
-            // Cambiar acción a ACTUALIZAR usando POST + @method('PUT') simulado
             f.action = '/actualizar/' + c.id_catalogo_cliente;
 
-            // Asegurarse de tener el campo _method con POST para el update
             let mInput = f.querySelector('input[name="_method"]');
             if (!mInput) {
                 mInput = document.createElement('input');
@@ -524,9 +495,14 @@
             sv('ciudad', c.ciudad);
             actualizarNumDoc();
 
+            // Cargar departamento y municipio
             if (c.cod_departamento) {
                 sv('cod_departamento', c.cod_departamento);
-                cargarMunicipios(c.cod_departamento, c.cod_municipio);
+                // Obtener cod_mh_departamento del option seleccionado
+                const depSel = document.getElementById('cod_departamento');
+                const opt = depSel.options[depSel.selectedIndex];
+                const cod = opt ? opt.getAttribute('data-cod') : null;
+                if (cod) cargarMunicipios(cod, c.cod_municipio);
             }
         }
 
@@ -535,7 +511,7 @@
             if (el && val !== null && val !== undefined) el.value = val;
         }
 
-        // ── Lógica dinámica de campos ────────────────────────────
+        // ── Campos dinámicos ─────────────────────────────────────
         function ajustarCampos() {
             const tipo = parseInt(document.getElementById('tipo_cliente').value) || 0;
 
@@ -573,9 +549,12 @@
             tipoDoc ? numDoc.removeAttribute('disabled') : numDoc.setAttribute('disabled', true);
         }
 
-        function cargarMunicipios(depId, seleccionado = null) {
+        function cargarMunicipios(cod, seleccionado = null) {
             const sel = document.getElementById('cod_municipio');
-            const data = municipiosPorDep[depId] || [];
+            const data = municipiosPorDep[cod] ||
+                municipiosPorDep[parseInt(cod)] ||
+                municipiosPorDep[String(cod).padStart(2, '0')] || [];
+
             sel.innerHTML = '<option value="">--</option>';
             data.forEach(m => {
                 const o = document.createElement('option');
@@ -586,6 +565,12 @@
             });
         }
 
+        document.getElementById('cod_departamento')?.addEventListener('change', function() {
+            const opt = this.options[this.selectedIndex];
+            const cod = opt ? opt.getAttribute('data-cod') : null;
+            cargarMunicipios(cod);
+        });
+
         function show(id) {
             document.getElementById(id)?.classList.remove('d-none');
         }
@@ -594,11 +579,6 @@
             document.getElementById(id)?.classList.add('d-none');
         }
 
-        document.getElementById('cod_departamento')?.addEventListener('change', function() {
-            cargarMunicipios(this.value);
-        });
-
-        // Auto-ocultar notificación
         setTimeout(() => document.getElementById('alerta-flash')?.remove(), 4000);
     </script>
 </body>

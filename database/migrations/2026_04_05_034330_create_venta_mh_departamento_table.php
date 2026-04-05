@@ -11,18 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('venta_mh_tipo_documento', function (Blueprint $table) {
-            $table->id('id_tipo_documento');
-            $table->string('tipo_documento');
-            $table->string('cod_tipo_documento');
+        Schema::create('venta_mh_departamento', function (Blueprint $table) {
+            $table->id('id_departamento');
+            $table->string('departamento');
+            $table->string('cod_mh_departamento');
             $table->string('estado')->default('1');
         });
     }
+
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('venta_mh_tipo_documento');
+        Schema::dropIfExists('venta_mh_departamento');
     }
 };

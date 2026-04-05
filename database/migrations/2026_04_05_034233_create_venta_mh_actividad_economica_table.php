@@ -6,7 +6,9 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
         Schema::create('venta_mh_actividad_economica', function (Blueprint $table) {
@@ -16,6 +18,9 @@ return new class extends Migration
             $table->string('estado')->default('1');
         });
     }
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
         Schema::dropIfExists('venta_mh_actividad_economica');

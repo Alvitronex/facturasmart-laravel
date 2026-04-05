@@ -36,8 +36,9 @@ class Cliente extends Model
     //Relaciones con tablas
     public function tipoDocumento()
     {
-        return $this->hasOne(TipoDocumento::class, 'id_tipo_documento', 'cod_tipo_documento');
+        return $this->belongsTo(TipoDocumento::class, 'cod_tipo_documento', 'id_tipo_documento');
     }
+
     public function actividadEconomica()
     {
         return $this->belongsTo(ActividadEconomica::class, 'cod_actividad_economica', 'id_actividad_economica');

@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('venta_catalogo_cliente', function (Blueprint $table) {
-            $table->id();
+            $table->id('id_catalogo_cliente');
             $table->foreignId('cod_tipo_documento')->nullable()
                 ->constrained('venta_mh_tipo_documento', 'id_tipo_documento')->nullOnDelete();
             $table->string('dui_nit')->nullable();

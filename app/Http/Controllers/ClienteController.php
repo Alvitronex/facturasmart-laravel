@@ -10,7 +10,6 @@ use App\Models\Pais;
 use App\Models\TipoContribuyente;
 use App\Models\TipoDocumento;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class ClienteController extends Controller
 {
@@ -31,17 +30,31 @@ class ClienteController extends Controller
         return view('clientes.index', compact('clientes', 'catalogos', 'municipiosPorDep'));
     }
 
+    public function create()
+    {
+        $catalogos        = $this->catalogos();
+        $municipiosPorDep = $this->municipiosPorDep();
+
+        return view('clientes.create', compact('catalogos', 'municipiosPorDep'));
+    }
+
     public function store(Request $request)
     {
-        $data = $this->limpiarNulos($request->except('_token'));
-        Cliente::create($data);
+        Cliente::create($request->except(['_token', '_method']));
         return redirect()->route('clientes.index')->with('msg', 'creado');
+    }
+
+    public function edit(Cliente $cliente)
+    {
+        $catalogos        = $this->catalogos();
+        $municipiosPorDep = $this->municipiosPorDep();
+
+        return view('clientes.edit', compact('cliente', 'catalogos', 'municipiosPorDep'));
     }
 
     public function update(Request $request, Cliente $cliente)
     {
-        $data = $this->limpiarNulos($request->except(['_token', '_method']));
-        $cliente->update($data);
+        $cliente->update($request->except(['_token', '_method']));
         return redirect()->route('clientes.index')->with('msg', 'actualizado');
     }
 
@@ -92,8 +105,4 @@ class ClienteController extends Controller
         return $agrupados;
     }
 
-    private function limpiarNulos(array $data): array
-    {
-        return array_map(fn($v) => $v === '' ? null : $v, $data);
-    }
 }
